@@ -63,16 +63,19 @@ int* ChamaKMP(char* texto , char* p, int numeroDePadroes,int *controle){
     int jKmp = 0;
     int iterador = 0;
     int i = KMPMatch(texto, p, &iKmp, &jKmp);
-    if(texto[i-1] == ' ' ||texto[i-1] == texto[i]){
-        //eh realmente uma palavra, e nao apenas uma silaba de uma.
-        resposta[iterador] = i;
+    if(texto[strlen(p)] == ' '){
+        resposta[0] = i;
+        iterador++;
+    }
+    else{
+        resposta[0] = -1;
         iterador++;
     }
     while (i < strlen(texto) && i != -1){
         i = KMPMatch(texto, p , &iKmp,&jKmp);
-        if(texto[i-1] == ' ' ||texto[i-1] == texto[i]){
+        if(texto[i-1] == ' '){
             //eh realmente uma palavra, e nao apenas uma silaba de uma.
-        resposta[iterador] = i;
+            resposta[iterador] = i;
             iterador++;
         }
     }
@@ -129,31 +132,35 @@ char** split(char* a_str, const char a_delim)
     return result;
 }
 void separaPalavras(char *texto, char *padrao, int numeroDePadroes, int *controle){
-   //utiliza o split para separar as palavras, separando-as por espacos
+    //utiliza o split para separar as palavras, separando-as por espacos
     int i = 0;
     if(numeroDePadroes == 1){
         int *resposta = ChamaKMP(texto, padrao, numeroDePadroes, controle);
         while(i < *controle){
-            if(resposta[i] != -1){
-                printf("%d", resposta[i]);
+            if(resposta[0] == -1)//nao existe a palavra
+                printf("%d", resposta[0]);
+            else  if(resposta[i] != -1){
+                printf("%d ", resposta[i]);
             }
             i++;
         }printf("\n");
     }else{
-    char* palavras = strtok(padrao," ");
-    while(palavras) {
-      // puts(palavras);
-        int *resposta = ChamaKMP(texto, palavras,numeroDePadroes, controle);
-        while(i < *controle){
-            if(resposta[i] != -1){
-        printf("%d ", resposta[i]);
-            }
-            i++;
-        }printf("\n");
-        i = 0;
-        palavras = strtok(NULL, " ");
+        char* palavras = strtok(padrao," ");
+        while(palavras) {
+            // puts(palavras);
+            int *resposta = ChamaKMP(texto, palavras,numeroDePadroes, controle);
+            while(i < *controle){
+                if(resposta[0] == -1)//nao existe a palavra
+                    printf("%d", resposta[0]);
+                else if(resposta[i] != -1){
+                    printf("%d ", resposta[i]);
+                }
+                i++;
+            }printf("\n");
+            i = 0;
+            palavras = strtok(NULL, " ");
+        }
     }
-}
 }
 
 char* novaString(char* texto, int posicao){
